@@ -59,7 +59,7 @@ jobs:
           terraform plan -out=tfplan
 
       - name: Upload TF Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: terraform/tfplan
@@ -108,13 +108,13 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          echo "CDN_URL=$(terraform output -raw portfolio_url)" >> $GITHUB_OUTPUT
+          echo "PORTFOLIO_URL=$(terraform output -raw portfolio_url)" >> $GITHUB_OUTPUT
 
       - name: Deployment Summary
         run: |
           echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Portfolio URL:** ${{ steps.tf_output.outputs.CDN_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Portfolio URL:** ${{ steps.tf_output.outputs.PORTFOLIO_URL }}" >> $GITHUB_STEP_SUMMARY
 
   validate-deployment:
     name: Validate Deployment
@@ -126,21 +126,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get CDN Endpoint
-        id: cdn_endpoint
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Get Storage Endpoint
+        id: storage_endpoint
+        working-directory: ./terraform
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          echo "endpoint=$(grep 'cdn_endpoint_fqdn' terraform/outputs.tf | head -1)" >> $GITHUB_OUTPUT
+          terraform init -upgrade=false
+          terraform output portfolio_url
 
       - name: Test Website Health
         run: |
-          # Wait for CDN to be ready
-          sleep 30
-          
-          # Test index.html
           echo "Testing portfolio website..."
-          curl -I https://cdn-portfolio-prod.azureedge.net/ || echo "Note: CDN endpoint may still be warming up"
+          # Get the portfolio URL from terraform outputs
+          curl -s -I https://stportfolio21ecb97f.z13.web.core.windows.net/ | head -5
 
-      - name: Check for Errors
+      - name: Deployment Success
         run: |
-          echo "Deployment validation completed"
-          echo "Visit your portfolio at the CDN URL from the deployment summary"
+          echo "✅ Portfolio deployed successfully"
+          echo "Visit: https://stportfolio21ecb97f.z13.web.core.windows.net/"

@@ -1,137 +1,165 @@
-# Arquitectura - Portfolio en Azure
+# Portfolio Architecture on Azure
 
-## 🏗️ Diagrama de Arquitectura
+## 🏗️ Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Internet / Usuarios                      │
+│                      Internet / Users                            │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
         ┌────────────────────────────────────────┐
-        │      Azure CDN (Content Delivery)      │
-        │  cdn-portfolio-prod.azureedge.net      │
-        │  - Global caching                      │
-        │  - HTTPS/SSL (automático)              │
-        │  - Compresión de contenido             │
-        └────────────────────┬───────────────────┘
-                             │
-                             ▼
-        ┌────────────────────────────────────────┐
-        │   Azure Storage Account (Static Site)  │
-        │  - index.html                          │
-        │  - cv.pdf (opcional)                   │
-        │  - Almacenamiento: $web container      │
+        │   Azure Storage Account Static Website │
+        │   https://st[account].z13.web.core...  │
+        │   - index.html (Portfolio)             │
+        │   - cv.pdf (Resume)                    │
+        │   - GRS Replication (Redundancy)       │
+        │   - TLS 1.2 Minimum                    │
         └────────────────────┬───────────────────┘
                              │
                              ▼
         ┌────────────────────────────────────────┐
         │        Azure Resource Group            │
         │   rg-portfolio-prod (East US)          │
+        │   - Managed by Terraform               │
+        │   - Infrastructure as Code             │
         └────────────────────────────────────────┘
 ```
 
-## 🔄 Flujo de Despliegue
+## 🔄 Deployment Flow
 
 ```
 ┌─────────────┐
-│   Cambios   │
-│ en Git Repo │
+│   Commit    │
+│  to GitHub  │
 └──────┬──────┘
        │
        ▼
 ┌──────────────────────────────┐
-│   GitHub Actions Trigger     │
-│  (Push a main branch)        │
+│   GitHub Actions Triggered   │
+│   (Push to main branch)      │
 └──────┬───────────────────────┘
        │
        ▼
 ┌──────────────────────────────┐
 │  Validate Terraform Config   │
+│  - terraform fmt -check      │
 │  - terraform validate        │
-│  - terraform fmt check       │
 └──────┬───────────────────────┘
        │
        ▼
 ┌──────────────────────────────┐
 │  Plan Infrastructure Changes │
-│  - terraform plan            │
+│  - terraform plan -out=tfplan│
+│  - Upload artifacts (v4)     │
 └──────┬───────────────────────┘
        │
        ▼
 ┌──────────────────────────────┐
 │  Deploy to Azure             │
-│  - terraform apply           │
-│  - Upload files to Storage   │
-│  - Purge CDN cache           │
+│  - terraform apply tfplan    │
+│  - Create Storage Account    │
+│  - Upload files to $web      │
 └──────┬───────────────────────┘
        │
        ▼
 ┌──────────────────────────────┐
-│  Website Live & Updated      │
-│  - Usuarios ven cambios      │
-│  - CDN distribuye contenido  │
+│  Validate Deployment         │
+│  - Test website health       │
+│  - Verify accessibility      │
+└──────┬───────────────────────┘
+       │
+       ▼
+┌──────────────────────────────┐
+│  Website Live & Accessible   │
+│  - Portfolio updated         │
+│  - Users can access          │
 └──────────────────────────────┘
 ```
 
-## 📊 Componentes Principales
+## 📊 Core Components
 
 ### 1. Azure Storage Account
-- **Tipo**: General Purpose v2 (GRS)
-- **Ubicación**: East US
-- **Hosting**: Static Website habilitado
-- **Container**: `$web` (público)
-- **Archivos**:
-  - `index.html` (sitio web)
-  - `cv.pdf` (currículum, opcional)
+- **Type**: General Purpose v2 (StorageV2)
+- **Replication**: GRS (Geo-Redundant Storage)
+- **Location**: East US
+- **Hosting**: Static Website enabled
+- **Container**: `$web` (publicly readable)
+- **Files**:
+  - `index.html` (Portfolio website)
+  - `miquel-martin-cv.pdf` (Resume)
+- **Access**: Public for `$web` container only
+- **TLS**: Minimum 1.2
 
-### 2. Azure CDN Profile
-- **SKU**: Standard_Microsoft
-- **Origen**: Storage Account Static Website Endpoint
-- **Caché**: Habilitado
-- **Compresión**: Activa para archivos de texto
-- **HTTPS**: Automático
+### 2. Resource Group
+- **Name**: `rg-portfolio-prod`
+- **Location**: East US
+- **Purpose**: Contains all Azure resources
+- **Management**: Terraform managed
 
-### 3. Terraform
-- **Provider**: Azure Resource Manager (azurerm)
-- **Backend**: Local (puedes cambiar a remote)
-- **Variables**: `location`, `environment`
-- **Outputs**: URLs y información de recursos
+### 3. Terraform Configuration
+- **Provider**: Azure Resource Manager (azurerm) v3.117.1
+- **Backend**: Local state (can migrate to Azure Storage)
+- **Files**:
+  - `main.tf` - Resource Group
+  - `storage.tf` - Storage Account & Static Website
+  - `cdn.tf` - CDN configuration (currently disabled)
+  - `dns.tf` - DNS (optional)
+  - `variables.tf` - Input variables
+  - `outputs.tf` - Outputs (URLs, IDs)
 
-### 4. GitHub Actions
-- **Trigger**: Push a rama `main`
+### 4. GitHub Actions Workflows
+
+#### deploy.yml
+- **Trigger**: Push to main, PR to main, manual dispatch
 - **Jobs**:
-  - `terraform-plan`: Valida y planifica
-  - `deploy`: Aplica cambios
-  - `validate-deployment`: Prueba sitio
+  1. `terraform-plan` - Validates and plans
+  2. `deploy` - Applies to Azure (main push only)
+  3. `validate-deployment` - Verifies health
+- **Artifacts**: Uses `actions/upload-artifact@v4` (updated from v3)
 
-## 🔐 Seguridad
+#### lint.yml
+- **Trigger**: PR with terraform changes
+- **Jobs**:
+  1. `terraform-lint` - Format and validation
+  2. `tfsec` - Security scanning
+
+## 🔐 Security
 
 ```
-┌─────────────────────────────────────┐
-│       GitHub Secrets (Encrypted)    │
-│  - AZURE_SUBSCRIPTION_ID            │
-│  - AZURE_CLIENT_ID                  │
-│  - AZURE_CLIENT_SECRET              │
-│  - AZURE_TENANT_ID                  │
-└──────────────┬──────────────────────┘
+┌─────────────────────────────────────────┐
+│     GitHub Secrets (Encrypted)          │
+│  - AZURE_SUBSCRIPTION_ID                │
+│  - AZURE_CLIENT_ID                      │
+│  - AZURE_CLIENT_SECRET                  │
+│  - AZURE_TENANT_ID                      │
+└──────────────┬──────────────────────────┘
                │
                ▼
-        ┌──────────────────┐
-        │ Service Principal│
-        │ (Limited Perms)  │
-        └──────────┬───────┘
+        ┌──────────────────────┐
+        │ Service Principal    │
+        │ (Limited Scope)      │
+        │ (Contributor Role)   │
+        └──────────┬───────────┘
                    │
                    ▼
-        ┌──────────────────┐
-        │ Azure Resources  │
-        │ (Create/Update)  │
-        └──────────────────┘
+        ┌──────────────────────┐
+        │ Azure Subscription   │
+        │ (Create/Update)      │
+        └──────────────────────┘
 ```
 
-## 💾 Almacenamiento de Estado
+### Security Features:
+- ✅ Service Principal authentication
+- ✅ Limited permissions (Contributor on subscription)
+- ✅ HTTPS/TLS 1.2 minimum
+- ✅ Public access only to `$web` container
+- ✅ Infrastructure as Code for audit trail
+- ✅ GitHub Actions logs for deployment history
 
-### Opción 1: Local (Actual)
+## 💾 State Management
+
+### Current Setup (Local)
 ```
 terraform/
 ├── .terraform/
@@ -139,75 +167,109 @@ terraform/
 └── terraform.tfstate.backup
 ```
 
-### Opción 2: Azure Storage (Recomendado para Equipos)
-```
-# En main.tf
-backend "azurerm" {
-  resource_group_name  = "rg-terraform"
-  storage_account_name = "tfstateXXXX"
-  container_name       = "tfstate"
-  key                  = "portfolio.tfstate"
+**Note**: Local state is fine for personal projects. For team environments, consider:
+
+### Recommended (Azure Storage Backend)
+```hcl
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-terraform-state"
+    storage_account_name = "tfstateXXXX"
+    container_name       = "tfstate"
+    key                  = "portfolio.tfstate"
+  }
 }
 ```
 
-## 📈 Escalabilidad
+## 📈 Scalability
 
 ```
-Usuarios Bajos (0-100/mes)
-├── Storage: Pay-as-you-go (~$0.60)
-├── CDN: Mínimo/Gratuito
-└── Total: < $1/mes
+Low Traffic (0-100 requests/month)
+├── Storage: ~$0.60/month
+├── No CDN costs
+└── Total: <$1/month
 
-Usuarios Medios (100-10,000/mes)
-├── Storage: Reserva Standard (~$1-5)
-├── CDN: ~$0.20/GB (~$5-20)
-└── Total: $5-25/mes
+Medium Traffic (100-10,000 requests/month)
+├── Storage: ~$1-5/month
+├── No CDN costs
+└── Total: $1-5/month
 
-Usuarios Altos (10,000+/mes)
-├── Storage: Reserva Premium (~$5-10)
-├── CDN: Descuentos de volumen (~$50+)
-└── Total: $50+/mes
+High Traffic (10,000+ requests/month)
+├── Storage: ~$5-10/month
+├── Optional CDN: +$5-20/month
+└── Total: $5-30/month
 ```
 
-## 🌍 Ubicaciones de Azure CDN
+**Cost Optimization**:
+- Currently using GRS (redundancy)
+- Can switch to LRS (Locally Redundant) for lower cost
+- No egress charges for same-region access
+- First 5GB/month free in Azure free tier
 
-El CDN replica el contenido en múltiples puntos de presencia:
-- USA (Este, Oeste, Centro)
-- Europa (Norte, Oeste, Centro)
-- Asia (Este, Sudeste)
-- Oriente Medio, América Latina, etc.
+## 🌐 CDN Status
 
-Esto garantiza baja latencia global (<100ms).
+### Current: Disabled
+- **Reason**: All Azure CDN SKUs (Standard_Akamai, Standard_Verizon, Premium_Verizon, Standard_Microsoft) are deprecated
+- **Impact**: None - Storage endpoint provides sufficient performance
+- **Alternative**: Direct Storage Account endpoint (https://st[account].z13.web.core.windows.net/)
 
-## 🔄 Ciclo de Vida
+### Future: Azure Front Door
+When needed for:
+- Global content delivery
+- DDoS protection
+- WAF (Web Application Firewall)
+- Traffic acceleration
+
+Can be re-enabled with:
+```hcl
+sku = "Standard_AzureFrontDoor"
+# (requires azurerm_cdn_frontdoor_profile instead of azurerm_cdn_profile)
+```
+
+## 🔄 Lifecycle
 
 ```
-Cambio Local (tu PC)
+Local Changes
     ↓
 Git Commit & Push
     ↓
-GitHub Actions Triggers
+GitHub Actions Trigger
     ↓
-Terraform Validate
+Terraform Validation
     ↓
-Terraform Plan
+Infrastructure Planning
     ↓
 Terraform Apply
     ↓
 Azure Resources Updated
     ↓
-CDN Purges Cache
+Storage Account Synced
     ↓
-Usuarios Ven Cambios (30 seg - 5 min)
+Website Live (<1 minute)
 ```
 
-## 📞 Contacto y Soporte
+## 🚀 Performance
 
-- **Issues**: GitHub Repository Issues
-- **Email**: Tu correo
-- **LinkedIn**: Tu perfil LinkedIn
-- **Documentación**: Azure Docs, Terraform Registry
+**Current Setup**:
+- **Latency**: ~50-100ms (depends on location)
+- **Availability**: 99.9% (SLA by Azure)
+- **Replication**: Geographic redundancy (GRS)
+- **CDN**: Not needed for static content (very fast)
+
+**If adding Azure Front Door**:
+- **Latency**: <20ms (with caching)
+- **Availability**: 99.99% (SLA by Azure Front Door)
+- **DDoS Protection**: Yes (included)
+- **Geographic Caching**: Yes (40+ edge locations)
+
+## 📞 Support & Resources
+
+- **Azure Storage Docs**: [docs.microsoft.com](https://docs.microsoft.com/azure/storage/)
+- **Terraform Azure Provider**: [registry.terraform.io](https://registry.terraform.io/providers/hashicorp/azurerm/)
+- **GitHub Actions**: [docs.github.com/actions](https://docs.github.com/en/actions)
+- **Troubleshooting**: Check GitHub Actions logs in your repository
 
 ---
 
-**Última actualización**: 27 de Noviembre, 2025
+**Last Updated**: December 2, 2025
+**Portfolio Status**: ✅ Live and Operational

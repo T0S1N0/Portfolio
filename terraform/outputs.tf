@@ -22,9 +22,9 @@ output "storage_website_endpoint" {
 
 output "deployment_summary" {
   value = {
-    storage_account     = azurerm_storage_account.portfolio.name
-    portfolio_url       = azurerm_storage_account.portfolio.primary_web_endpoint
-    resource_group      = azurerm_resource_group.main.name
+    storage_account = azurerm_storage_account.portfolio.name
+    portfolio_url   = azurerm_storage_account.portfolio.primary_web_endpoint
+    resource_group  = azurerm_resource_group.main.name
   }
   description = "Summary of deployed resources"
 }
