@@ -30,7 +30,7 @@ provider "azurerm" {
 locals {
   project_name = "portfolio"
   environment  = "prod"
-  location     = "Poland Central"
+  location     = "East US"
 
   tags = {
     Environment = local.environment
