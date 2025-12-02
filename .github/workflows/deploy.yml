@@ -108,9 +108,10 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TF_LOG: off
         run: |
           terraform output -json > outputs.json
-          PORTFOLIO_URL=$(terraform output -raw portfolio_url 2>/dev/null)
+          PORTFOLIO_URL=$(terraform output -raw portfolio_url)
           echo "PORTFOLIO_URL=${PORTFOLIO_URL}" >> $GITHUB_OUTPUT
           echo "✅ Portfolio URL: ${PORTFOLIO_URL}"
 

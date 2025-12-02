@@ -9,14 +9,13 @@ terraform {
   }
 
   # Uncomment and configure to use remote state with Azure Storage
-  # backend "azurerm" {
-  #   resource_group_name  = "rg-terraform"
-  #   storage_account_name = "tfstate"
-  #   container_name       = "tfstate"
-  #   key                  = "portfolio.tfstate"
-  # }
+  backend "azurerm" {
+    resource_group_name  = "rg-terraform"
+    storage_account_name = "tfstatefiles01"
+    container_name       = "tfstate"
+    key                  = "portfolio.tfstate"
+  }
 }
-
 
 provider "azurerm" {
   features {
@@ -31,7 +30,7 @@ provider "azurerm" {
 locals {
   project_name = "portfolio"
   environment  = "prod"
-  location     = "East US"
+  location     = "Poland Central"
 
   tags = {
     Environment = local.environment
