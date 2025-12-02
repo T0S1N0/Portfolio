@@ -1,7 +1,0 @@
-# Ejemplo de configuración para despliegue local
-
-# Copiar este archivo a terraform.tfvars y actualizar valores
-# cp terraform.tfvars.example terraform.tfvars
-
-location    = "East US"
-environment = "prod"
