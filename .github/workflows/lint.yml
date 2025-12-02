@@ -3,13 +3,13 @@ name: Lint Terraform
 on:
   pull_request:
     paths:
-      - 'terraform/**'
-      - '.github/workflows/lint.yml'
+      - "terraform/**"
+      - ".github/workflows/lint.yml"
 
 jobs:
   terraform-lint:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
 
   tfsec:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,9 +39,8 @@ jobs:
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
-          working_directory: 'terraform'
-          format: 'sarif'
-          out_dir: '.'
+          working_directory: "terraform"
+          additional_args: "--format sarif --out results.sarif"
 
       - name: Upload SARIF to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
