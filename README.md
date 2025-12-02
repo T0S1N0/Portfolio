@@ -123,6 +123,7 @@ When you push to the `main` branch, GitHub Actions automatically:
 5. Validates deployment health
 
 The portfolio is then accessible at:
+
 ```
 https://st[account-hash].z13.web.core.windows.net/
 ```
@@ -154,6 +155,7 @@ Any file added to the root directory will be automatically uploaded by Terraform
 To use a custom domain, you have two options:
 
 1. **Azure Storage Custom Domain** (Requires SSL/TLS support)
+
    - Configure in Azure Portal: Storage Account → Static website → Custom domain
    - Requires separate SSL certificate
 
@@ -183,6 +185,7 @@ The Azure infrastructure is extremely economical:
 There are no CDN costs. For very low traffic, costs can be under $5/month.
 
 **Cost Reduction Tips:**
+
 - Use LRS (locally redundant storage) instead of GRS for lower costs
 - Monitor Storage Account usage in Azure Portal
 
@@ -204,6 +207,7 @@ There are no CDN costs. For very low traffic, costs can be under $5/month.
 3. Confirm Storage Account is public (not blocked)
 
 Example direct URLs to test:
+
 ```
 # Index page
 https://st[account].z13.web.core.windows.net/index.html

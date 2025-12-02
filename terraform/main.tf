@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.0"
-  
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -20,9 +20,9 @@ terraform {
 provider "azurerm" {
   features {
     virtual_machine {
-      delete_os_disk_on_deletion            = true
-      graceful_shutdown                     = true
-      skip_shutdown_and_force_delete         = false
+      delete_os_disk_on_deletion     = true
+      graceful_shutdown              = true
+      skip_shutdown_and_force_delete = false
     }
   }
 }
@@ -31,7 +31,7 @@ locals {
   project_name = "portfolio"
   environment  = "prod"
   location     = "East US"
-  
+
   tags = {
     Environment = local.environment
     Project     = local.project_name
