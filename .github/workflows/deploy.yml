@@ -111,9 +111,7 @@ jobs:
           TF_LOG: off
         run: |
           terraform output -json > outputs.json
-          PORTFOLIO_URL=$(terraform output -raw portfolio_url)
-          echo "PORTFOLIO_URL=${PORTFOLIO_URL}" >> $GITHUB_OUTPUT
-          echo "✅ Portfolio URL: ${PORTFOLIO_URL}"
+          echo "PORTFOLIO_URL=$(terraform output -raw portfolio_url)" >> $GITHUB_OUTPUT
 
       - name: Deployment Summary
         run: |
@@ -164,17 +162,19 @@ jobs:
 
       - name: Test Website Health
         run: |
-          URL="${{ steps.portfolio_url.outputs.url }}"
+          URL="${{ steps.portfolio_url.outputs.url}}"
           echo "Testing portfolio website at: ${URL}"
 
           # Test HTTP response
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${URL}")
           echo "HTTP Status Code: ${HTTP_CODE}"
 
-          if [ "$HTTP_CODE" = "200" ]; then
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Website is accessible"
+            exit 0
           else
-            echo "⚠️ Website returned HTTP $HTTP_CODE"
+            echo "::error::Website returned HTTP $HTTP_CODE"
+            exit 1
           fi
 
       - name: Validation Complete
