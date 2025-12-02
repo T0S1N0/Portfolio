@@ -94,6 +94,40 @@ az ad sp create-for-rbac --name "github-portfolio" \
 
 ---
 
+### 5. ❌ Azure Authentication Error: "Please run 'az login' to setup account"
+
+**Error**: 
+```
+ERROR: Please run 'az login' to setup account.
+Error: unable to build authorizer for Resource Manager API: 
+could not configure AzureCli Authorizer: tenant ID was not specified
+```
+
+**Root Cause**: GitHub Secrets for Azure authentication are not configured
+
+**Solution**: Configure GitHub Secrets (see `AZURE_AUTHENTICATION_SETUP.md` for detailed instructions)
+
+Quick steps:
+1. Create Azure Service Principal locally:
+```bash
+az ad sp create-for-rbac --name "github-portfolio" \
+  --role "Contributor" \
+  --scopes /subscriptions/YOUR_SUBSCRIPTION_ID \
+  --json-auth
+```
+
+2. Add 4 secrets to GitHub repo (Settings → Secrets → Actions):
+   - `AZURE_SUBSCRIPTION_ID` - Your subscription ID
+   - `AZURE_CLIENT_ID` - appId from Service Principal
+   - `AZURE_CLIENT_SECRET` - password from Service Principal  
+   - `AZURE_TENANT_ID` - tenant from Service Principal
+
+3. Re-run GitHub Actions workflow
+
+**See**: `AZURE_AUTHENTICATION_SETUP.md` for complete guide
+
+---
+
 ## Workflow Architecture
 
 ```
