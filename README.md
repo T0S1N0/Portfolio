@@ -4,18 +4,18 @@ Personal portfolio deployed on Microsoft Azure using Infrastructure as Code with
 
 ## 🏗️ Architecture
 
-- **Azure Storage Account**: Static website hosting (index.html, CV, etc.)
-- **Azure CDN**: Global content distribution with caching
-- **GitHub Actions**: CI/CD pipeline for automated deployment
+- **Azure Storage Account**: Static website hosting (index.html, CV, etc.) with GRS replication
+- **GitHub Actions**: CI/CD pipeline for automated deployment and validation
 - **Terraform**: Infrastructure as Code management
+- **Website**: HTML5 + CSS3 responsive design hosted on Azure Storage
 
 ## 📋 Technologies
 
 - **Cloud**: Microsoft Azure
-- **IaC**: Terraform
-- **CI/CD**: GitHub Actions
+- **IaC**: Terraform v1.6.5+
+- **CI/CD**: GitHub Actions with artifact management
 - **Frontend**: HTML5 + CSS3
-- **Monitoring**: Azure Monitor (optional)
+- **Storage**: Azure Storage Account (StorageV2, GRS)
 
 ## 🚀 Prerequisites
 
@@ -59,17 +59,18 @@ Add the following secrets:
 Portfolio/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml           # CI/CD Pipeline
+│       ├── deploy.yml           # Azure deployment CI/CD
+│       └── lint.yml             # Terraform linting & validation
 ├── terraform/
-│   ├── main.tf                  # Main configuration
-│   ├── storage.tf               # Storage Account
-│   ├── cdn.tf                   # CDN and endpoints
-│   ├── dns.tf                   # DNS (commented)
+│   ├── main.tf                  # Resource group configuration
+│   ├── storage.tf               # Storage Account & Static Website
+│   ├── cdn.tf                   # CDN config (currently disabled)
+│   ├── dns.tf                   # DNS configuration (optional)
 │   ├── variables.tf             # Terraform variables
 │   ├── outputs.tf               # Terraform outputs
-│   └── terraform.tfvars         # Default values
-├── index.html                   # Website
-├── cv.pdf                       # Resume (optional)
+│   └── terraform.tfvars         # Environment configuration
+├── index.html                   # Portfolio website
+├── miquel-martin-cv.pdf         # Resume/CV
 └── README.md                    # This file
 ```
 
@@ -115,11 +116,16 @@ Terraform will display outputs with your portfolio URL.
 
 When you push to the `main` branch, GitHub Actions automatically:
 
-1. Validates Terraform configuration
-2. Plans the changes
-3. Applies the infrastructure
-4. Uploads website files
-5. Invalidates CDN cache
+1. Validates Terraform configuration (`terraform fmt`, `terraform validate`)
+2. Plans the infrastructure changes (`terraform plan`)
+3. Applies the infrastructure (`terraform apply`)
+4. Uploads website files to Storage Account
+5. Validates deployment health
+
+The portfolio is then accessible at:
+```
+https://st[account-hash].z13.web.core.windows.net/
+```
 
 ## 📝 Customize Your Portfolio
 
@@ -145,17 +151,18 @@ Any file added to the root directory will be automatically uploaded by Terraform
 
 ## 🌐 Custom Domain
 
-To use a custom domain:
+To use a custom domain, you have two options:
 
-1. **Option A: Azure DNS**
+1. **Azure Storage Custom Domain** (Requires SSL/TLS support)
+   - Configure in Azure Portal: Storage Account → Static website → Custom domain
+   - Requires separate SSL certificate
 
-   - Uncomment the `dns.tf` section
-   - Configure your domain
-   - Update nameservers at your registrar
+2. **Azure Front Door** (Recommended for production)
+   - Provides global distribution, SSL/TLS termination, and WAF
+   - Can be enabled by uncommenting `azure-front-door` configuration in `cdn.tf`
+   - Provides automatic certificate management
 
-2. **Option B: External Registrar**
-   - Create a CNAME record pointing to your CDN endpoint
-   - Example: `www.yourdomain.com CNAME → cdn-portfolio-prod.azureedge.net`
+For now, use the Storage Account URL or configure through Azure Portal.
 
 ## 📊 Monitoring
 
@@ -167,52 +174,71 @@ Azure provides automatic monitoring through:
 
 ## 💰 Costs
 
-The Azure stack used is very economical:
+The Azure infrastructure is extremely economical:
 
-- **Storage Account**: ~$0.60/month (for 1GB)
-- **CDN**: ~$0.17/GB transferred (first 10TB)
-- **Estimated total**: $5-50/month depending on traffic
+- **Storage Account**: ~$0.60/month (GRS replication)
+- **Static Website Hosting**: Included with Storage Account
+- **Estimated total**: $5-15/month
 
-The first 1TB of monthly egress has reduced pricing.
+There are no CDN costs. For very low traffic, costs can be under $5/month.
+
+**Cost Reduction Tips:**
+- Use LRS (locally redundant storage) instead of GRS for lower costs
+- Monitor Storage Account usage in Azure Portal
 
 ## 🔐 Security
 
-- ✅ HTTPS enforced (CDN provides SSL/TLS certificates)
-- ✅ Storage Account with minimum TLS 1.2
-- ✅ Public access only for specific files
-- ✅ Service Principal with limited permissions
+- ✅ HTTPS/SSL enforced by Storage Account
+- ✅ Minimum TLS 1.2 required
+- ✅ Public access limited to `$web` container only
+- ✅ Service Principal with Contributor role (limited scope)
+- ✅ GitHub Secrets for sensitive credentials
+- ✅ Infrastructure as Code for audit trail
 
 ## 🐛 Troubleshooting
 
-### Error: "Resource group already exists"
+### Portfolio not loading
 
-```bash
-# Change the name in main.tf or use terraform import
-terraform import azurerm_resource_group.main /subscriptions/.../resourceGroups/...
+1. Check Storage Account Static Website is enabled in Azure Portal
+2. Verify `index.html` exists in `$web` container
+3. Confirm Storage Account is public (not blocked)
+
+Example direct URLs to test:
+```
+# Index page
+https://st[account].z13.web.core.windows.net/index.html
+
+# Direct blob access
+https://st[account].blob.core.windows.net/$web/index.html
 ```
 
-### CDN takes time to update
-
-The CDN may take up to 30 minutes to propagate changes. Use the direct Storage URL in the meantime:
-
-- Storage URL: `https://st[account].blob.core.windows.net/$web/index.html`
-
-### Authentication errors in GitHub Actions
-
-Verify that secrets are configured correctly:
+### Terraform errors
 
 ```bash
-# Test locally
-az login --service-principal -u $AZURE_CLIENT_ID \
-  -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+# Check state
+terraform state list
+
+# Validate configuration
+terraform validate
+
+# Format check
+terraform fmt -recursive
 ```
+
+### GitHub Actions failures
+
+1. Check GitHub Actions logs for specific errors
+2. Verify Azure Service Principal credentials are correct
+3. Ensure secrets are properly configured in GitHub repository settings
+4. Confirm Service Principal has Contributor role on subscription
 
 ## 📚 Useful Resources
 
 - [Azure Storage Static Website Documentation](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
 - [Terraform Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Azure CDN Pricing](https://azure.microsoft.com/en-us/pricing/details/cdn/)
+- [Azure Storage Pricing](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/)
+- [Azure Front Door (CDN Alternative)](https://docs.microsoft.com/en-us/azure/frontdoor/)
 
 ## 📄 License
 
@@ -227,4 +253,4 @@ This project is available under the MIT license.
 
 ---
 
-**Last updated**: December 1, 2025
+**Last updated**: December 2, 2025

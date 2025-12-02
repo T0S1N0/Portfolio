@@ -29,7 +29,7 @@ resource "azurerm_storage_container" "website" {
 resource "azurerm_storage_blob" "index" {
   name                   = "index.html"
   storage_account_name   = azurerm_storage_account.portfolio.name
-  storage_container_name = "$web"  # Auto-created by static website hosting
+  storage_container_name = "$web" # Auto-created by static website hosting
   type                   = "Block"
   source                 = "${path.module}/../index.html"
   content_type           = "text/html"
@@ -42,7 +42,7 @@ resource "azurerm_storage_blob" "cv" {
   count                  = fileexists("${path.module}/../cv.pdf") ? 1 : 0
   name                   = "cv.pdf"
   storage_account_name   = azurerm_storage_account.portfolio.name
-  storage_container_name = "$web"  # Auto-created by static website hosting
+  storage_container_name = "$web" # Auto-created by static website hosting
   type                   = "Block"
   source                 = "${path.module}/../cv.pdf"
   content_type           = "application/pdf"
