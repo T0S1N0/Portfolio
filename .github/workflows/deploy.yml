@@ -110,7 +110,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           terraform output -json > outputs.json
-          PORTFOLIO_URL=$(terraform output -raw portfolio_url)
+          PORTFOLIO_URL=$(terraform output -raw portfolio_url 2>/dev/null)
           echo "PORTFOLIO_URL=${PORTFOLIO_URL}" >> $GITHUB_OUTPUT
           echo "✅ Portfolio URL: ${PORTFOLIO_URL}"
 
@@ -165,11 +165,11 @@ jobs:
         run: |
           URL="${{ steps.portfolio_url.outputs.url }}"
           echo "Testing portfolio website at: ${URL}"
-          
+
           # Test HTTP response
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${URL}")
           echo "HTTP Status Code: ${HTTP_CODE}"
-          
+
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Website is accessible"
           else
