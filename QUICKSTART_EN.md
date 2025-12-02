@@ -1,6 +1,7 @@
 # Quick Reference - Azure Portfolio
 
 ## Portfolio URL
+
 ```
 https://stportfolio21ecb97f.z13.web.core.windows.net/
 ```
@@ -61,6 +62,7 @@ az ad sp create-for-rbac --name "app-name" --role "Contributor"
 ## Customization
 
 Edit `index.html`:
+
 - Update your name, title, skills, projects
 - Replace social links (GitHub, LinkedIn)
 - Update `miquel-martin-cv.pdf` with your resume
@@ -70,11 +72,13 @@ Push changes → GitHub Actions automatically deploys
 ## Troubleshooting
 
 **Portfolio not loading?**
+
 - Verify Storage Account exists in Azure Portal
 - Check Static Website is enabled
 - Verify index.html exists in $web container
 
 **Terraform errors?**
+
 ```bash
 terraform validate
 terraform state list
@@ -82,6 +86,7 @@ terraform show azurerm_storage_account.portfolio
 ```
 
 **GitHub Actions failed?**
+
 - Check Actions tab in GitHub
 - Review deployment logs
 - Verify Azure secrets configured
