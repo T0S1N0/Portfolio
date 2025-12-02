@@ -11,20 +11,19 @@ output "resource_group_id" {
 }
 
 output "portfolio_url" {
-  value       = "https://${azurerm_cdn_endpoint.portfolio.fqdn}"
-  description = "URL of the portfolio website"
+  value       = azurerm_storage_account.portfolio.primary_web_endpoint
+  description = "URL of the portfolio website (Static Website Hosting)"
 }
 
 output "storage_website_endpoint" {
   value       = azurerm_storage_account.portfolio.primary_web_endpoint
-  description = "Direct URL to the storage account website endpoint (before CDN)"
+  description = "Direct URL to the storage account website endpoint"
 }
 
 output "deployment_summary" {
   value = {
     storage_account     = azurerm_storage_account.portfolio.name
-    cdn_endpoint        = azurerm_cdn_endpoint.portfolio.fqdn
-    cdn_fqdn            = azurerm_cdn_endpoint.portfolio.fqdn
+    portfolio_url       = azurerm_storage_account.portfolio.primary_web_endpoint
     resource_group      = azurerm_resource_group.main.name
   }
   description = "Summary of deployed resources"

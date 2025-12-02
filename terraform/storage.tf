@@ -17,8 +17,9 @@ resource "azurerm_storage_account_static_website" "portfolio" {
   error_404_document = "index.html"
 }
 
-# Blob Container for website files
+# Blob Container for website files (auto-created by static website, but we reference it for uploads)
 resource "azurerm_storage_container" "website" {
+  count                 = 0 # Container is auto-created by static website hosting
   name                  = "$web"
   storage_account_name  = azurerm_storage_account.portfolio.name
   container_access_type = "blob"
@@ -28,10 +29,12 @@ resource "azurerm_storage_container" "website" {
 resource "azurerm_storage_blob" "index" {
   name                   = "index.html"
   storage_account_name   = azurerm_storage_account.portfolio.name
-  storage_container_name = azurerm_storage_container.website.name
+  storage_container_name = "$web"  # Auto-created by static website hosting
   type                   = "Block"
   source                 = "${path.module}/../index.html"
   content_type           = "text/html"
+
+  depends_on = [azurerm_storage_account_static_website.portfolio]
 }
 
 # Upload CV if it exists
@@ -39,10 +42,12 @@ resource "azurerm_storage_blob" "cv" {
   count                  = fileexists("${path.module}/../cv.pdf") ? 1 : 0
   name                   = "cv.pdf"
   storage_account_name   = azurerm_storage_account.portfolio.name
-  storage_container_name = azurerm_storage_container.website.name
+  storage_container_name = "$web"  # Auto-created by static website hosting
   type                   = "Block"
   source                 = "${path.module}/../cv.pdf"
   content_type           = "application/pdf"
+
+  depends_on = [azurerm_storage_account_static_website.portfolio]
 }
 
 # Storage Account Network Rules (Allow all for now, restrict later if needed)
