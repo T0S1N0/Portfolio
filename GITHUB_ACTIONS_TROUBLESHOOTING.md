@@ -3,9 +3,11 @@
 ## Issues Resolved
 
 ### 1. ❌ Deprecated Action: `actions/upload-artifact@v3`
+
 **Error**: `This request has been automatically failed because it uses a deprecated version of actions/upload-artifact: v3`
 
 **Fix**: Updated to `actions/upload-artifact@v4`
+
 ```yaml
 # OLD (v3 - DEPRECATED)
 - uses: actions/upload-artifact@v3
@@ -22,11 +24,13 @@
 ---
 
 ### 2. ❌ Missing Terraform Plan in Deploy Job
+
 **Error**: `terraform: plan file not found`
 
 **Root Cause**: The `terraform-plan` job creates `tfplan` but `deploy` job runs in separate container without access to it
 
 **Fix**: Use `actions/download-artifact@v4` to retrieve plan
+
 ```yaml
 # In deploy job, before terraform apply:
 - name: Download TF Plan Artifact
@@ -42,13 +46,16 @@
 ---
 
 ### 3. ❌ Hardcoded URL in Validation
+
 **Problem**: URL was hardcoded, causing issues if account name changes
+
 ```yaml
 # OLD (HARDCODED)
 curl -s -I https://stportfolio21ecb97f.z13.web.core.windows.net/
 ```
 
 **Fix**: Use Terraform outputs dynamically
+
 ```yaml
 # NEW (DYNAMIC)
 - name: Get Portfolio URL
@@ -66,9 +73,11 @@ curl -s -I https://stportfolio21ecb97f.z13.web.core.windows.net/
 ---
 
 ### 4. ⚠️ GitHub Actions Secrets Not Configured
+
 **Error**: `terraform init: Error: Failed to authenticate with Azure`
 
 **Solution**: Ensure these GitHub Secrets are configured:
+
 1. Go to: Repository → Settings → Secrets and variables → Actions
 2. Add secrets:
    - `AZURE_SUBSCRIPTION_ID`
@@ -120,7 +129,9 @@ github/workflows/deploy.yml
 **Cause**: Download artifact step failed or artifact name mismatch
 
 **Solution**:
+
 1. Check artifact upload in terraform-plan job:
+
    ```yaml
    - uses: actions/upload-artifact@v4
      with:
@@ -132,7 +143,7 @@ github/workflows/deploy.yml
    ```yaml
    - uses: actions/download-artifact@v4
      with:
-       name: tfplan  # Must match upload
+       name: tfplan # Must match upload
        path: terraform/
    ```
 
@@ -143,6 +154,7 @@ github/workflows/deploy.yml
 **Cause**: Terraform state has no outputs defined
 
 **Solution**: Verify `terraform/outputs.tf` exists and has content:
+
 ```hcl
 output "portfolio_url" {
   value = azurerm_storage_account.portfolio.primary_web_endpoint
@@ -156,6 +168,7 @@ output "portfolio_url" {
 **Cause**: Website not yet deployed or URL is incorrect
 
 **Solution**:
+
 1. Check deployment succeeded in deploy job logs
 2. Check URL is correct: `https://st[account].z13.web.core.windows.net/`
 3. Wait 1-2 minutes for DNS propagation
@@ -167,10 +180,11 @@ output "portfolio_url" {
 **Cause**: Running on incompatible GitHub Actions runner
 
 **Solution**: Ensure runner is `ubuntu-latest`:
+
 ```yaml
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Must be this
+    runs-on: ubuntu-latest # Must be this
 ```
 
 ---
@@ -201,11 +215,13 @@ act -l  # List all workflows
 ## Monitoring Deployments
 
 ### View Workflow Runs
+
 1. GitHub repo → Actions tab
 2. Click on workflow name
 3. View job details and logs
 
 ### Check Terraform State
+
 ```bash
 # Authenticate to Azure
 az login --service-principal -u $AZURE_CLIENT_ID \
@@ -223,7 +239,9 @@ az storage account show --resource-group rg-portfolio-prod
 ## GitHub Actions v4 Changes
 
 ### Upload Artifact v4
+
 **Key Changes from v3 → v4**:
+
 - Path format unchanged
 - Added `retention-days` parameter
 - Added `if-no-files-found` option (warn/error/ignore)
@@ -231,7 +249,9 @@ az storage account show --resource-group rg-portfolio-prod
 - Improved performance
 
 ### Download Artifact v4
+
 **Key Changes**:
+
 - Simpler syntax
 - Auto-handles multiple artifacts
 - Better path resolution
