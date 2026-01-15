@@ -39,12 +39,12 @@ resource "azurerm_storage_blob" "index" {
 
 # Upload CV if it exists
 resource "azurerm_storage_blob" "cv" {
-  count                  = fileexists("${path.module}/../cv.pdf") ? 1 : 0
+  count                  = fileexists("${path.module}/../miquel-martin-cv.pdf") ? 1 : 0
   name                   = "cv.pdf"
   storage_account_name   = azurerm_storage_account.portfolio.name
   storage_container_name = "$web" # Auto-created by static website hosting
   type                   = "Block"
-  source                 = "${path.module}/../cv.pdf"
+  source                 = "${path.module}/../miquel-martin-cv.pdf"
   content_type           = "application/pdf"
 
   depends_on = [azurerm_storage_account_static_website.portfolio]
