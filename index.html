@@ -14,6 +14,18 @@
     />
 
     <style>
+      :root {
+        --primary-color: #0071e3;
+        --secondary-color: #f5f5f7;
+        --text-color: #2c2c2e;
+        --light-text: #6e6e73;
+        --bg-color: #ffffff;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.08);
+        --border-radius: 16px;
+        --transition: all 0.3s ease;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -27,17 +39,49 @@
       body {
         font-family: "Jost", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
           Arial, sans-serif;
-        background-color: #f5f5f7;
-        color: #2c2c2e;
+        background-color: var(--secondary-color);
+        color: var(--text-color);
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
+      }
+
+      /* Scroll to Top Button */
+      #scroll-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3rem;
+        height: 3rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+
+      #scroll-to-top.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      #scroll-to-top:hover {
+        transform: scale(1.1);
+        background: #005bb5;
       }
 
       /* Navigation */
       nav {
         padding: 1.5rem 3rem;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         background-color: rgba(255, 255, 255, 0.9);
         backdrop-filter: saturate(180%) blur(20px);
@@ -46,7 +90,14 @@
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow);
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-color);
+        text-decoration: none;
       }
 
       .nav-links {
@@ -59,14 +110,73 @@
         text-decoration: none;
         font-size: 0.9375rem;
         font-weight: 500;
-        transition: color 0.2s ease;
+        transition: var(--transition);
         display: flex;
         align-items: center;
         gap: 0.4rem;
+        position: relative;
       }
 
       .nav-link:hover {
-        color: #2c2c2e;
+        color: var(--primary-color);
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* Mobile Menu */
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 4px;
+      }
+
+      .menu-toggle span {
+        width: 25px;
+        height: 3px;
+        background: var(--text-color);
+        transition: var(--transition);
+      }
+
+      #menu-checkbox {
+        display: none;
+      }
+
+      #menu-checkbox:checked ~ .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-color);
+        padding: 1rem;
+        box-shadow: var(--shadow);
+      }
+
+      #menu-checkbox:checked ~ .menu-toggle span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      #menu-checkbox:checked ~ .menu-toggle span:nth-child(2) {
+        opacity: 0;
+      }
+
+      #menu-checkbox:checked ~ .menu-toggle span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
       }
 
       /* Hero */
@@ -74,6 +184,7 @@
         padding: 8rem 3rem 4rem;
         text-align: center;
         background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+        animation: fadeInUp 1s ease-out;
       }
 
       .hero h1 {
@@ -81,11 +192,16 @@
         font-weight: 600;
         letter-spacing: -0.02em;
         margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--primary-color), #005bb5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .hero p {
         font-size: 1.25rem;
-        color: #6e6e73;
+        color: var(--light-text);
+        animation: fadeInUp 1s ease-out 0.2s both;
       }
 
       /* About Section */
@@ -93,22 +209,29 @@
         max-width: 900px;
         margin: 3rem auto;
         padding: 0 3rem;
+        animation: fadeInUp 1s ease-out 0.4s both;
       }
 
       .about-title {
         font-size: 1.875rem;
         font-weight: 600;
         margin-bottom: 1.5rem;
-        color: #2c2c2e;
+        color: var(--text-color);
       }
 
       .about-content {
-        background: #ffffff;
-        border-radius: 16px;
+        background: var(--bg-color);
+        border-radius: var(--border-radius);
         padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow);
         line-height: 1.8;
         color: #424245;
+        transition: var(--transition);
+      }
+
+      .about-content:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-2px);
       }
 
       .about-content p {
@@ -120,13 +243,14 @@
         max-width: 1200px;
         margin: 3rem auto;
         padding: 0 3rem;
+        animation: fadeInUp 1s ease-out 0.6s both;
       }
 
       .skills-title {
         font-size: 1.875rem;
         font-weight: 600;
         margin-bottom: 1.5rem;
-        color: #2c2c2e;
+        color: var(--text-color);
       }
 
       .skills-grid {
@@ -136,32 +260,65 @@
       }
 
       .skill-category {
-        background: #ffffff;
-        border-radius: 16px;
+        background: var(--bg-color);
+        border-radius: var(--border-radius);
         padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skill-category::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 113, 227, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .skill-category:hover::before {
+        left: 100%;
+      }
+
+      .skill-category:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-4px);
       }
 
       .skill-category h3 {
         font-size: 1.125rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        color: #2c2c2e;
+        color: var(--text-color);
+        position: relative;
+        z-index: 1;
       }
 
       .skill-list {
         list-style: none;
+        position: relative;
+        z-index: 1;
       }
 
       .skill-list li {
         padding: 0.5rem 0;
         color: #424245;
         font-size: 0.9375rem;
+        transition: var(--transition);
+      }
+
+      .skill-list li:hover {
+        color: var(--primary-color);
+        transform: translateX(5px);
       }
 
       .skill-list li:before {
         content: "▸ ";
-        color: #0071e3;
+        color: var(--primary-color);
         font-weight: 600;
         margin-right: 0.5rem;
       }
@@ -171,13 +328,14 @@
         max-width: 1200px;
         margin: 3rem auto;
         padding: 0 3rem;
+        animation: fadeInUp 1s ease-out 0.8s both;
       }
 
       .projects-title {
         font-size: 1.875rem;
         font-weight: 600;
         margin-bottom: 1.5rem;
-        color: #2c2c2e;
+        color: var(--text-color);
       }
 
       /* Project Grid */
@@ -189,20 +347,38 @@
 
       /* Project Tile */
       .project-tile {
-        background: #ffffff;
-        border-radius: 16px;
+        background: var(--bg-color);
+        border-radius: var(--border-radius);
         padding: 2rem;
         text-decoration: none;
         color: inherit;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: var(--transition);
+        box-shadow: var(--shadow);
         cursor: pointer;
         display: block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .project-tile::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--primary-color);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .project-tile:hover::before {
+        transform: scaleX(1);
       }
 
       .project-tile:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow-hover);
       }
 
       .project-number {
@@ -215,7 +391,7 @@
       .project-title {
         font-size: 1.375rem;
         font-weight: 600;
-        color: #2c2c2e;
+        color: var(--text-color);
         margin-bottom: 0.75rem;
         letter-spacing: -0.01em;
       }
@@ -226,6 +402,107 @@
         line-height: 1.5;
       }
 
+      /* Modal for Projects */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: var(--bg-color);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+        animation: slideIn 0.3s ease;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--light-text);
+      }
+
+      .modal-close:hover {
+        color: var(--text-color);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Tooltips */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: var(--text-color);
+        color: var(--bg-color);
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.875rem;
+      }
+
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
       /* Mobile */
       @media (max-width: 768px) {
         nav {
@@ -233,11 +510,12 @@
         }
 
         .nav-links {
+          display: none;
           gap: 1.5rem;
         }
 
-        .nav-link {
-          font-size: 0.875rem;
+        .menu-toggle {
+          display: flex;
         }
 
         .hero {
@@ -274,6 +552,14 @@
         .project-title {
           font-size: 1.125rem;
         }
+
+        #scroll-to-top {
+          bottom: 1rem;
+          right: 1rem;
+          width: 2.5rem;
+          height: 2.5rem;
+          font-size: 1rem;
+        }
       }
 
       /* Large screens */
@@ -287,20 +573,34 @@
     </style>
   </head>
   <body>
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" onclick="document.documentElement.scrollTop = 0;">↑</button>
+
     <!-- Navigation -->
     <nav>
+      <a href="#hero" class="nav-brand">Miquel Martin</a>
+      <input type="checkbox" id="menu-checkbox">
+      <label for="menu-checkbox" class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
       <div class="nav-links">
-        <a href="https://github.com/T0S1N0" class="nav-link" target="_blank">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="https://github.com/T0S1N0" class="nav-link tooltip" target="_blank">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path
               d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
             />
           </svg>
           GitHub
+          <span class="tooltip-text">Check out my GitHub profile</span>
         </a>
         <a
           href="https://www.linkedin.com/in/miquel-martin-leiva/"
-          class="nav-link"
+          class="nav-link tooltip"
           target="_blank"
         >
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -309,20 +609,22 @@
             />
           </svg>
           LinkedIn
+          <span class="tooltip-text">Connect with me on LinkedIn</span>
         </a>
-        <a href="cv.pdf" class="nav-link" target="_blank">
+        <a href="cv.pdf" class="nav-link tooltip" target="_blank">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path
               d="M14,2H6C5.17,2 4.5,2.67 4.5,3.5V20.5C4.5,21.33 5.17,22 6,22H18C18.83,22 19.5,21.33 19.5,20.5V8.5L14,2M13,3.5L18,8.5H13V3.5M12,11L8,15H10V19H14V15H16L12,11"
             />
           </svg>
           CV
+          <span class="tooltip-text">Download my CV</span>
         </a>
       </div>
     </nav>
 
     <!-- Hero -->
-    <section class="hero">
+    <section id="hero" class="hero">
       <h1>Miquel Martin Leiva</h1>
       <p>
         Cloud Engineer & DevOps Specialist | Infrastructure as Code | Azure &
@@ -331,7 +633,7 @@
     </section>
 
     <!-- About -->
-    <section class="about">
+    <section id="about" class="about">
       <h2 class="about-title">About Me</h2>
       <div class="about-content">
         <p>
@@ -350,7 +652,7 @@
     </section>
 
     <!-- Skills -->
-    <section class="skills">
+    <section id="skills" class="skills">
       <h2 class="skills-title">Skills</h2>
       <div class="skills-grid">
         <div class="skill-category">
@@ -415,7 +717,7 @@
     </section>
 
     <!-- Projects -->
-    <section class="projects-container">
+    <section id="projects" class="projects-container">
       <h2 class="projects-title">Projects</h2>
       <div class="project-grid">
         <a
@@ -465,5 +767,26 @@
         </a>
       </div>
     </section>
+
+    <!-- Modal (for future use) -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">&times;</button>
+        <h3>Project Details</h3>
+        <p>More information about this project will be added here.</p>
+      </div>
+    </div>
+
+    <script>
+      // Simple scroll detection for scroll-to-top button (minimal JS)
+      window.addEventListener('scroll', function() {
+        const scrollButton = document.getElementById('scroll-to-top');
+        if (window.pageYOffset > 300) {
+          scrollButton.classList.add('show');
+        } else {
+          scrollButton.classList.remove('show');
+        }
+      });
+    </script>
   </body>
 </html>
