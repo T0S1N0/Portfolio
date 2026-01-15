@@ -110,7 +110,6 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           TF_LOG: off
         run: |
-          terraform output -json > outputs.json
           echo "PORTFOLIO_URL=$(terraform output -raw portfolio_url)" >> $GITHUB_OUTPUT
 
       - name: Deployment Summary
