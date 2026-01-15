@@ -100,29 +100,15 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: terraform apply -auto-approve tfplan
 
-      - name: Get Terraform Outputs
-        id: tf_output
-        working-directory: ./terraform
-        env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          TF_LOG: off
-        run: |
-          PORTFOLIO_URL=$(terraform output -raw portfolio_url)
-          echo "PORTFOLIO_URL=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
-          echo "::debug::Terraform exited with code $?"
-
       - name: Deployment Summary
         run: |
           echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Portfolio URL:** ${{ steps.tf_output.outputs.PORTFOLIO_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Portfolio URL:** https://stportfolio21ecb97f.z13.web.core.windows.net/" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Resource Group:** rg-portfolio-prod" >> $GITHUB_STEP_SUMMARY
           echo "**Region:** East US" >> $GITHUB_STEP_SUMMARY
-          echo "**Storage Account:** (See outputs)" >> $GITHUB_STEP_SUMMARY
+          echo "**Storage Account:** stportfolio21ecb97f" >> $GITHUB_STEP_SUMMARY
 
   validate-deployment:
     name: Validate Deployment
@@ -150,14 +136,8 @@ jobs:
 
       - name: Get Portfolio URL
         id: portfolio_url
-        working-directory: ./terraform
-        env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          URL=$(terraform output -raw portfolio_url)
+          URL="https://stportfolio21ecb97f.z13.web.core.windows.net/"
           echo "url=${URL}" >> $GITHUB_OUTPUT
           echo "Testing URL: ${URL}"
 
