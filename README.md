@@ -12,7 +12,7 @@ Personal portfolio deployed on Microsoft Azure using Infrastructure as Code with
 ## 📋 Technologies
 
 - **Cloud**: Microsoft Azure
-- **IaC**: Terraform v1.6.5+
+- **IaC**: Terraform v1.5.0+
 - **CI/CD**: GitHub Actions with artifact management
 - **Frontend**: HTML5 + CSS3
 - **Storage**: Azure Storage Account (StorageV2, GRS)
@@ -62,13 +62,11 @@ Portfolio/
 │       ├── deploy.yml           # Azure deployment CI/CD
 │       └── lint.yml             # Terraform linting & validation
 ├── terraform/
-│   ├── main.tf                  # Resource group configuration
+│   ├── main.tf                  # Resource group and provider configuration
 │   ├── storage.tf               # Storage Account & Static Website
-│   ├── cdn.tf                   # CDN config (currently disabled)
-│   ├── dns.tf                   # DNS configuration (optional)
 │   ├── variables.tf             # Terraform variables
-│   ├── outputs.tf               # Terraform outputs
-│   └── terraform.tfvars         # Environment configuration
+│   └── outputs.tf               # Terraform outputs
+├── ARCHITECTURE.md              # Detailed architecture documentation
 ├── index.html                   # Portfolio website
 ├── miquel-martin-cv.pdf         # Resume/CV
 └── README.md                    # This file
@@ -161,7 +159,7 @@ To use a custom domain, you have two options:
 
 2. **Azure Front Door** (Recommended for production)
    - Provides global distribution, SSL/TLS termination, and WAF
-   - Can be enabled by uncommenting `azure-front-door` configuration in `cdn.tf`
+   - Can be added by creating additional Terraform configuration for Azure Front Door
    - Provides automatic certificate management
 
 For now, use the Storage Account URL or configure through Azure Portal.
@@ -257,4 +255,4 @@ This project is available under the MIT license.
 
 ---
 
-**Last updated**: December 2, 2025
+**Last updated**: January 16, 2026
