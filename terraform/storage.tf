@@ -21,7 +21,7 @@ resource "azurerm_storage_account_static_website" "portfolio" {
 resource "azurerm_storage_container" "website" {
   count                 = 0 # Container is auto-created by static website hosting
   name                  = "$web"
-  storage_account_name  = azurerm_storage_account.portfolio.name
+  storage_account_id    = azurerm_storage_account.portfolio.id
   container_access_type = "blob"
 }
 
