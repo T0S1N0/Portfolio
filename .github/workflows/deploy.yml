@@ -109,7 +109,7 @@ jobs:
           az storage blob upload-batch \
             --account-name stportfolio21ecb97f \
             --destination '$web' \
-            --source . \
+            --source src/ \
             --overwrite true
 
       - name: Deployment Summary

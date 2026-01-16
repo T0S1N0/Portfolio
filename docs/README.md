@@ -61,15 +61,20 @@ Portfolio/
 │   └── workflows/
 │       ├── deploy.yml           # Azure deployment CI/CD
 │       └── lint.yml             # Terraform linting & validation
-├── terraform/
-│   ├── main.tf                  # Resource group and provider configuration
-│   ├── storage.tf               # Storage Account & Static Website
-│   ├── variables.tf             # Terraform variables
-│   └── outputs.tf               # Terraform outputs
-├── ARCHITECTURE.md              # Detailed architecture documentation
-├── index.html                   # Portfolio website
-├── miquel-martin-cv.pdf         # Resume/CV
-└── README.md                    # This file
+├── docs/
+│   ├── ARCHITECTURE.md          # Detailed architecture documentation
+│   └── README.md                # This file
+├── src/
+│   ├── index.html               # Portfolio website
+│   ├── index.js                 # JavaScript functionality
+│   ├── miquel-martin-cv.pdf     # Resume/CV
+│   ├── assets/                  # Images, icons, and media files
+│   └── css/                     # Stylesheets
+└── terraform/
+    ├── main.tf                  # Resource group and provider configuration
+    ├── storage.tf               # Storage Account & Static Website
+    ├── variables.tf             # Terraform variables
+    └── outputs.tf               # Terraform outputs
 ```
 
 ## 🛠️ Deploy Locally
