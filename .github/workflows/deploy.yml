@@ -100,6 +100,18 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: terraform apply -auto-approve tfplan
 
+      - name: Azure Login
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Upload website files
+        run: |
+          az storage blob upload-batch \
+            --account-name stportfolio21ecb97f \
+            --destination '$web' \
+            --source . \
+            --overwrite true
+
       - name: Deployment Summary
         run: |
           echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
