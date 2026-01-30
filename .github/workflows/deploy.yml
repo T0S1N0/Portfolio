@@ -123,9 +123,15 @@ jobs:
       - name: Get Terraform outputs
         id: tf_outputs
         working-directory: ./terraform
+        env:
+          TF_IN_AUTOMATION: 1
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          STORAGE_ACCOUNT=$(terraform output -json | jq -r '.storage_account_name.value')
-          PORTFOLIO_URL=$(terraform output -json | jq -r '.portfolio_url.value')
+          STORAGE_ACCOUNT=$(terraform output -raw storage_account_name 2>/dev/null | tr -d '\n')
+          PORTFOLIO_URL=$(terraform output -raw portfolio_url 2>/dev/null | tr -d '\n')
           echo "storage_account_name=$STORAGE_ACCOUNT" >> $GITHUB_OUTPUT
           echo "portfolio_url=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
 
