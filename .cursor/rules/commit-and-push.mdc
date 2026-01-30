@@ -1,0 +1,14 @@
+---
+description: Commit and push after every code change
+alwaysApply: true
+---
+
+# Commit and Push After Every Change
+
+After making any code or config changes in this project:
+
+1. **Stage** all modified and new files: `git add` (relevant paths or `-A` if appropriate).
+2. **Commit** with a clear, concise message (e.g. conventional commits: `fix(ci): ...`, `feat: ...`).
+3. **Push** to the remote: `git push`.
+
+Do this in the same turn as the edit so the user's repo is always up to date. Request `git_write` and `network` when running git commands that push.
