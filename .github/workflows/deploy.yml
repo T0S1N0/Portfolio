@@ -132,7 +132,7 @@ jobs:
         run: |
           RAW_STORAGE=$(terraform output -raw storage_account_name 2>&1)
           RAW_URL=$(terraform output -raw portfolio_url 2>&1)
-          STORAGE_ACCOUNT=$(echo "$RAW_STORAGE" | grep -oE 'st[a-z0-9]{2,22}' | head -1)
+          STORAGE_ACCOUNT=$(echo "$RAW_STORAGE" | grep -oE 'st[a-z0-9]{2,22}' | awk 'length>max{max=length; s=$0} END{print s}')
           PORTFOLIO_URL=$(echo "$RAW_URL" | grep -oE 'https://[^[:space:]]+' | head -1)
           echo "storage_account_name=$STORAGE_ACCOUNT" >> $GITHUB_OUTPUT
           echo "portfolio_url=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
@@ -147,7 +147,8 @@ jobs:
             --account-name ${{ steps.tf_outputs.outputs.storage_account_name }} \
             --destination '$web' \
             --source src/ \
-            --overwrite true
+            --overwrite true \
+            --auth-mode login
 
       - name: Deployment Summary
         run: |
