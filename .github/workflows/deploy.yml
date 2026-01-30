@@ -107,8 +107,10 @@ jobs:
         id: tf_outputs
         working-directory: ./terraform
         run: |
-          echo "storage_account_name=$(terraform output -raw storage_account_name)" >> $GITHUB_OUTPUT
-          echo "portfolio_url=$(terraform output -raw portfolio_url)" >> $GITHUB_OUTPUT
+          STORAGE_ACCOUNT=$(terraform output -json | jq -r '.storage_account_name.value')
+          PORTFOLIO_URL=$(terraform output -json | jq -r '.portfolio_url.value')
+          echo "storage_account_name=$STORAGE_ACCOUNT" >> $GITHUB_OUTPUT
+          echo "portfolio_url=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
 
       - name: Azure Login
         run: |
