@@ -20,6 +20,7 @@
     />
   </head>
   <body>
+    <a href="#about" class="skip-link">Skip to main content</a>
     <header class="header">
       <div class="header__content">
         <div class="header__logo-container">
@@ -48,17 +49,22 @@
             <li class="header__link-wrapper">
               <a href="./index.html#contact" class="header__link"> Contact </a>
             </li>
+            <li class="header__link-wrapper">
+              <a href="./miquel-martin-cv.pdf" class="header__link" target="_blank" rel="noopener noreferrer">CV</a>
+            </li>
           </ul>
-          <div class="header__main-ham-menu-cont">
+          <div class="header__main-ham-menu-cont" role="button" tabindex="0" aria-label="Open menu" aria-expanded="false">
             <img
               src="./assets/svg/ham-menu.svg"
-              alt="hamburger menu"
+              alt=""
               class="header__main-ham-menu"
+              aria-hidden="true"
             />
             <img
               src="./assets/svg/ham-menu-close.svg"
-              alt="hamburger menu close"
+              alt=""
               class="header__main-ham-menu-close d-none"
+              aria-hidden="true"
             />
           </div>
         </div>
@@ -80,6 +86,9 @@
 
             <li class="header__sm-menu-link">
               <a href="./index.html#contact"> Contact </a>
+            </li>
+            <li class="header__sm-menu-link">
+              <a href="./miquel-martin-cv.pdf" target="_blank" rel="noopener noreferrer">CV</a>
             </li>
           </ul>
         </div>
@@ -103,10 +112,11 @@
           <a
             href="https://www.linkedin.com/in/miquel-martin-leiva/"
             class="home-hero__social-icon-link"
+            rel="noopener noreferrer"
           >
             <img
               src="./assets/png/linkedin-ico.png"
-              alt="icon"
+              alt="LinkedIn profile"
               class="home-hero__social-icon"
             />
           </a>
@@ -115,10 +125,11 @@
           <a
             href="https://github.com/T0S1N0"
             class="home-hero__social-icon-link"
+            rel="noopener noreferrer"
           >
             <img
               src="./assets/png/github-ico.png"
-              alt="icon"
+              alt="GitHub profile"
               class="home-hero__social-icon"
             />
           </a>
@@ -133,8 +144,7 @@
         <h2 class="heading heading-sec heading-sec__mb-med">
           <span class="heading-sec__main">About Me</span>
           <span class="heading-sec__sub">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic facilis
-            tempora explicabo quae quod deserunt eius sapiente
+            Cloud & DevOps engineer focused on Infrastructure as Code, automation, and multi-cloud solutions.
           </span>
         </h2>
         <div class="about__content">
@@ -214,6 +224,7 @@
                 href="https://github.com/T0S1N0/Portfolio"
                 class="btn btn--med btn--theme dynamicBgClr"
                 target="_blank"
+                rel="noopener noreferrer"
                 >View on GitHub</a
               >
             </div>
@@ -238,6 +249,7 @@
                 href="https://github.com/T0S1N0"
                 class="btn btn--med btn--theme dynamicBgClr"
                 target="_blank"
+                rel="noopener noreferrer"
                 >View Profile</a
               >
             </div>
@@ -259,12 +271,7 @@
                 Continuous exploration of new technologies and architectural
                 patterns. Automation, security, and cloud optimization.
               </p>
-              <a
-                href="#"
-                class="btn btn--med btn--theme dynamicBgClr"
-                target="_blank"
-                >Coming Soon</a
-              >
+              <span class="btn btn--med btn--theme dynamicBgClr" aria-disabled="true">Coming Soon</span>
             </div>
           </div>
         </div>
@@ -296,10 +303,11 @@
               <input
                 required
                 placeholder="Enter Your Email"
-                type="text"
+                type="email"
                 class="contact__form-input"
                 name="email"
                 id="email"
+                inputmode="email"
               />
             </div>
             <div class="contact__form-field">
@@ -331,24 +339,24 @@
             <div class="main-footer__social-cont">
               <a
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 href="https://www.linkedin.com/in/miquel-martin-leiva/"
               >
                 <img
                   class="main-footer__icon"
                   src="./assets/png/linkedin-ico.png"
-                  alt="icon"
+                  alt="LinkedIn"
                 />
               </a>
               <a
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 href="https://github.com/T0S1N0"
               >
                 <img
                   class="main-footer__icon"
                   src="./assets/png/github-ico.png"
-                  alt="icon"
+                  alt="GitHub"
                 />
               </a>
             </div>
@@ -356,18 +364,13 @@
           <div class="main-footer__row main-footer__row-2">
             <h4 class="heading heading-sm text-lt">Miquel Martin Leiva</h4>
             <p class="main-footer__short-desc">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit facilis
-              tempora explicabo quae quod deserunt
+              Cloud Engineer & DevOps specialist. Infrastructure as Code, Azure, Terraform, and automation.
             </p>
           </div>
         </div>
 
-        <!-- If you give me some credit or shoutout here by linking to my website, then it will be a big thing for me and will help me a lot :) -->
         <div class="main-footer__lower">
-          &copy; Copyright 2021. Made by
-          <a rel="noreferrer" target="_blank" href="https://rammaheshwari.com"
-            >Ram Maheshwari</a
-          >
+          &copy; Copyright 2026 Miquel Martin Leiva
         </div>
       </div>
     </footer>

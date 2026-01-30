@@ -8,17 +8,19 @@ const headerHamMenuCloseBtn = document.querySelector(
 const headerSmallMenuLinks = document.querySelectorAll('.header__sm-menu-link')
 
 hamMenuBtn.addEventListener('click', () => {
-  if (smallMenu.classList.contains('header__sm-menu--active')) {
+  const isOpen = smallMenu.classList.contains('header__sm-menu--active')
+  if (isOpen) {
     smallMenu.classList.remove('header__sm-menu--active')
-  } else {
-    smallMenu.classList.add('header__sm-menu--active')
-  }
-  if (headerHamMenuBtn.classList.contains('d-none')) {
     headerHamMenuBtn.classList.remove('d-none')
     headerHamMenuCloseBtn.classList.add('d-none')
+    hamMenuBtn.setAttribute('aria-expanded', 'false')
+    hamMenuBtn.setAttribute('aria-label', 'Open menu')
   } else {
+    smallMenu.classList.add('header__sm-menu--active')
     headerHamMenuBtn.classList.add('d-none')
     headerHamMenuCloseBtn.classList.remove('d-none')
+    hamMenuBtn.setAttribute('aria-expanded', 'true')
+    hamMenuBtn.setAttribute('aria-label', 'Close menu')
   }
 })
 
@@ -31,8 +33,8 @@ for (let i = 0; i < headerSmallMenuLinks.length; i++) {
 }
 
 // ---
-const headerLogoConatiner = document.querySelector('.header__logo-container')
+const headerLogoContainer = document.querySelector('.header__logo-container')
 
-headerLogoConatiner.addEventListener('click', () => {
+headerLogoContainer.addEventListener('click', () => {
   location.href = 'index.html'
 })

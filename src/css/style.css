@@ -54,6 +54,12 @@ button:focus,
 a:focus,
 textarea:focus {
   outline: none; }
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #0062b9;
+  outline-offset: 2px; }
 
 button {
   border: none;
@@ -183,9 +189,25 @@ textarea {
 .d-none {
   display: none; }
 
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 1rem;
+  padding: 0.75rem 1rem;
+  background: #0062b9;
+  color: #fff;
+  font-weight: 700;
+  z-index: 1001;
+  border-radius: 5px;
+  transition: top 0.2s; }
+  .skip-link:focus {
+    top: 1rem;
+    outline: 2px solid #fff;
+    outline-offset: 2px; }
+
 .home-hero {
   color: #fff;
-  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../../assets/svg/common-bg.svg);
+  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../assets/svg/common-bg.svg);
   background-position: center;
   height: 100vh;
   min-height: 80rem;
@@ -323,7 +345,7 @@ textarea {
           font-size: 1.7rem; } }
 
 .contact {
-  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../../assets/svg/common-bg.svg);
+  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../assets/svg/common-bg.svg);
   background-size: cover;
   background-position: center; }
   .contact__form-container {
@@ -404,7 +426,7 @@ textarea {
 
 .project-cs-hero {
   color: #fff;
-  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../../assets/svg/common-bg.svg);
+  background: linear-gradient(to right, rgba(0, 98, 185, 0.8), rgba(0, 98, 185, 0.8)), url(../assets/svg/common-bg.svg);
   background-size: cover;
   background-position: center;
   position: relative; }
