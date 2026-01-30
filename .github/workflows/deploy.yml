@@ -143,12 +143,13 @@ jobs:
 
       - name: Upload website files
         run: |
+          ACCOUNT_KEY=$(az storage account keys list --account-name ${{ steps.tf_outputs.outputs.storage_account_name }} --query '[0].value' -o tsv)
           az storage blob upload-batch \
             --account-name ${{ steps.tf_outputs.outputs.storage_account_name }} \
+            --account-key "$ACCOUNT_KEY" \
             --destination '$web' \
             --source src/ \
-            --overwrite true \
-            --auth-mode login
+            --overwrite true
 
       - name: Deployment Summary
         run: |
