@@ -101,7 +101,24 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: terraform apply -auto-approve tfplan
+        run: |
+          set -e
+          if ! terraform apply -auto-approve tfplan 2>&1 | tee apply.log; then
+            if grep -q "Error acquiring the state lock" apply.log; then
+              echo "Stale state lock detected, force-unlocking and retrying..."
+              LOCK_ID=$(grep "ID:" apply.log | head -1 | sed 's/.*ID:[[:space:]]*//' | tr -d ' \n\r│')
+              if [ -n "$LOCK_ID" ]; then
+                terraform force-unlock -force "$LOCK_ID"
+                terraform apply -auto-approve tfplan
+              else
+                cat apply.log
+                exit 1
+              fi
+            else
+              cat apply.log
+              exit 1
+            fi
+          fi
 
       - name: Get Terraform outputs
         id: tf_outputs
