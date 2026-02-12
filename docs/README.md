@@ -2,6 +2,12 @@
 
 Personal portfolio deployed on Microsoft Azure using Infrastructure as Code with Terraform and automated CI/CD with GitHub Actions.
 
+This repository showcases three main projects demonstrating cloud infrastructure, DevOps automation, and modern web development practices:
+
+1. **[Azure Serverless E-Commerce Platform](https://github.com/T0S1N0/Azure-Serverless-E-Commerce-Platform)** - Full-stack serverless e-commerce with React, Azure Functions, and Cosmos DB
+2. **[Self-Hosted GitHub Actions Runners](https://github.com/T0S1N0/self-hosted-azure-github-runners)** - Automated deployment of GitHub runners on Azure VMs with Terraform and Ansible
+3. **[Portfolio Website](https://github.com/T0S1N0/Portfolio)** - This portfolio itself, deployed as Azure static website
+
 ## 🏗️ Architecture
 
 - **Azure Storage Account**: Static website hosting (index.html, CV, etc.) with GRS replication
@@ -258,6 +264,11 @@ This project is available under the MIT license.
 - GitHub: [@T0S1N0](https://github.com/T0S1N0)
 - LinkedIn: [Miquel Martin Leiva](https://www.linkedin.com/in/miquel-martin-leiva/)
 
+## 🔗 Related Projects
+
+- **[Azure Serverless E-Commerce Platform](https://github.com/T0S1N0/Azure-Serverless-E-Commerce-Platform)** - Serverless e-commerce with React + Azure Functions + Cosmos DB
+- **[Self-Hosted GitHub Actions Runners](https://github.com/T0S1N0/self-hosted-azure-github-runners)** - Automated GitHub runners deployment with Terraform + Ansible
+
 ---
 
-**Last updated**: January 16, 2026
+**Last updated**: February 12, 2026

@@ -238,6 +238,31 @@
           <div class="projects__row">
             <div class="projects__row-img-cont">
               <img
+                src="./assets/png/github-runners-preview.png"
+                alt="Self-Hosted GitHub Actions Runners on Azure"
+                class="projects__row-img"
+                loading="lazy"
+              />
+            </div>
+            <div class="projects__row-content">
+              <h3 class="projects__row-content-title">Self-Hosted GitHub Actions Runners</h3>
+              <p class="projects__row-content-desc">
+                Automated deployment of self-hosted GitHub Actions runners on Azure VMs. Terraform provisions infrastructure (VNet, NSG, VMs), Ansible configures runners as systemd services. Fully automated via GitHub Actions with OIDC authentication.
+              </p>
+              <div class="projects__row-content-btns">
+                <a
+                  href="https://github.com/T0S1N0/self-hosted-azure-github-runners"
+                  class="btn btn--med btn--theme dynamicBgClr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View on GitHub</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="projects__row">
+            <div class="projects__row-img-cont">
+              <img
                 src="./assets/png/portfolio-preview.png"
                 alt="Portfolio on Azure - Miquel Martin Leiva homepage"
                 class="projects__row-img"
@@ -259,9 +284,8 @@
                   rel="noopener noreferrer"
                   >View on GitHub</a
                 >
-                <!-- Replace href with your portfolio live URL (e.g. from Terraform output portfolio_url) -->
                 <a
-                  href="#"
+                  href="https://stportfolioprodusw3fzh.z6.web.core.windows.net/"
                   class="btn btn--med btn--theme-inv projects__live-btn"
                   target="_blank"
                   rel="noopener noreferrer"
