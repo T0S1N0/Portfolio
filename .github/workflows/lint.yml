@@ -1,4 +1,4 @@
-name: Lint Terraform
+name: 🔍 Lint Terraform
 
 on:
   pull_request:
@@ -8,41 +8,50 @@ on:
 
 jobs:
   terraform-lint:
+    name: 📐 Terraform Lint
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
+      - name: ⚙️ Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
-      - name: Terraform Format Check
-        working-directory: ./terraform
-        run: terraform fmt -check -recursive
-
-      - name: Terraform Validate
+      - name: 📐 Terraform Format Check
         working-directory: ./terraform
         run: |
+          echo "::group::Checking Terraform formatting"
+          terraform fmt -check -recursive
+          echo "::endgroup::"
+          echo "✅ Format check passed"
+
+      - name: ✅ Terraform Validate
+        working-directory: ./terraform
+        run: |
+          echo "::group::Validating Terraform configuration"
           terraform init -backend=false
           terraform validate
+          echo "::endgroup::"
+          echo "✅ Configuration is valid"
 
   tfsec:
+    name: 🔒 Security Scan (tfsec)
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: Run tfsec
+      - name: 🔍 Run tfsec security scan
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           working_directory: "terraform"
           additional_args: "--format sarif --out results.sarif"
 
-      - name: Upload SARIF to GitHub Security tab
+      - name: 📤 Upload SARIF to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: results.sarif

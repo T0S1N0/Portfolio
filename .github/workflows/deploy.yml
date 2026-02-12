@@ -1,4 +1,4 @@
-name: Deploy Portfolio to Azure
+name: 🚀 Deploy Portfolio to Azure
 
 on:
   push:
@@ -15,45 +15,61 @@ permissions:
 
 jobs:
   terraform-plan:
-    name: Terraform Plan
+    name: 📋 Terraform Plan
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
+      - name: ⚙️ Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
-      - name: Terraform Format Check
+      - name: 📐 Terraform Format Check
         working-directory: ./terraform
-        run: terraform fmt -check -recursive
+        run: |
+          echo "::group::Checking Terraform formatting"
+          terraform fmt -check -recursive
+          echo "::endgroup::"
+          echo "✅ Format check passed"
 
-      - name: Terraform Init
-        working-directory: ./terraform
-        env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: terraform init
-
-      - name: Terraform Validate
-        working-directory: ./terraform
-        run: terraform validate
-
-      - name: Terraform Plan
+      - name: 🔧 Terraform Init
         working-directory: ./terraform
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: terraform plan -lock=false -out=tfplan
+        run: |
+          echo "::group::Initializing Terraform"
+          terraform init
+          echo "::endgroup::"
+          echo "✅ Terraform initialized"
 
-      - name: Upload TF Plan Artifact
+      - name: ✅ Terraform Validate
+        working-directory: ./terraform
+        run: |
+          echo "::group::Validating Terraform configuration"
+          terraform validate
+          echo "::endgroup::"
+          echo "✅ Configuration is valid"
+
+      - name: 📋 Terraform Plan
+        working-directory: ./terraform
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        run: |
+          echo "::group::Planning infrastructure changes"
+          terraform plan -lock=false -out=tfplan
+          echo "::endgroup::"
+          echo "✅ Plan generated"
+
+      - name: 📤 Upload TF Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
@@ -62,7 +78,7 @@ jobs:
           if-no-files-found: warn
 
   deploy:
-    name: Deploy to Azure
+    name: 🏗️ Deploy to Azure
     needs: terraform-plan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -71,30 +87,21 @@ jobs:
       portfolio_url: ${{ steps.tf_outputs.outputs.portfolio_url }}
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
+      - name: ⚙️ Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
-      - name: Download TF Plan Artifact
+      - name: 📥 Download TF Plan Artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
           path: terraform/
 
-      - name: Terraform Init
-        working-directory: ./terraform
-        env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: terraform init
-
-      - name: Terraform Apply
+      - name: 🔧 Terraform Init
         working-directory: ./terraform
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -102,25 +109,43 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
+          echo "::group::Initializing Terraform"
+          terraform init
+          echo "::endgroup::"
+          echo "✅ Terraform initialized"
+
+      - name: 🚀 Terraform Apply
+        working-directory: ./terraform
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        run: |
+          echo "::group::Applying infrastructure changes"
           set -e
           if ! terraform apply -auto-approve tfplan 2>&1 | tee apply.log; then
             if grep -q "Error acquiring the state lock" apply.log; then
-              echo "Stale state lock detected, force-unlocking and retrying..."
+              echo "⚠️ Stale state lock detected, force-unlocking and retrying..."
               LOCK_ID=$(grep "ID:" apply.log | head -1 | sed 's/.*ID:[[:space:]]*//' | tr -d ' \n\r│')
               if [ -n "$LOCK_ID" ]; then
                 terraform force-unlock -force "$LOCK_ID"
                 terraform apply -auto-approve tfplan
               else
                 cat apply.log
+                echo "::endgroup::"
                 exit 1
               fi
             else
               cat apply.log
+              echo "::endgroup::"
               exit 1
             fi
           fi
+          echo "::endgroup::"
+          echo "✅ Infrastructure deployed"
 
-      - name: Get Terraform outputs
+      - name: 📤 Get Terraform outputs
         id: tf_outputs
         working-directory: ./terraform
         env:
@@ -130,19 +155,26 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
+          echo "::group::Capturing Terraform outputs"
           RAW_STORAGE=$(terraform output -raw storage_account_name 2>&1)
           RAW_URL=$(terraform output -raw portfolio_url 2>&1)
           STORAGE_ACCOUNT=$(echo "$RAW_STORAGE" | grep -oE 'st[a-z0-9]{2,22}' | awk 'length>max{max=length; s=$0} END{print s}')
           PORTFOLIO_URL=$(echo "$RAW_URL" | grep -oE 'https://[^[:space:]]+' | head -1 | sed 's/::.*//')
           echo "storage_account_name=$STORAGE_ACCOUNT" >> $GITHUB_OUTPUT
           echo "portfolio_url=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
+          echo "::endgroup::"
+          echo "✅ Outputs captured"
 
-      - name: Azure Login
+      - name: 🔐 Azure Login
         run: |
+          echo "::group::Logging in to Azure"
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          echo "::endgroup::"
+          echo "✅ Azure login successful"
 
-      - name: Upload website files
+      - name: 📤 Upload website files
         run: |
+          echo "::group::Uploading website to Azure Storage"
           ACCOUNT_KEY=$(az storage account keys list --account-name ${{ steps.tf_outputs.outputs.storage_account_name }} --query '[0].value' -o tsv)
           az storage blob upload-batch \
             --account-name ${{ steps.tf_outputs.outputs.storage_account_name }} \
@@ -150,26 +182,38 @@ jobs:
             --destination '$web' \
             --source src/ \
             --overwrite true
+          echo "::endgroup::"
+          echo "✅ Website files uploaded"
 
-      - name: Deployment Summary
+      - name: 📊 Deployment Summary
         run: |
-          echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Portfolio URL:** ${{ steps.tf_outputs.outputs.portfolio_url }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Resource Group:** rg-portfolio-prod" >> $GITHUB_STEP_SUMMARY
-          echo "**Region:** East US" >> $GITHUB_STEP_SUMMARY
-          echo "**Storage Account:** ${{ steps.tf_outputs.outputs.storage_account_name }}" >> $GITHUB_STEP_SUMMARY
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 🎉 Deployment Complete!
+          
+          ### 🌐 Portfolio Website
+          **Live URL:** ${{ steps.tf_outputs.outputs.portfolio_url }}
+          
+          ### 🏗️ Infrastructure
+          - **Resource Group:** `rg-portfolio-prod`
+          - **Region:** East US
+          - **Storage Account:** `${{ steps.tf_outputs.outputs.storage_account_name }}`
+          
+          ### ✅ Next Steps
+          - Visit your portfolio: [${{ steps.tf_outputs.outputs.portfolio_url }}](${{ steps.tf_outputs.outputs.portfolio_url }})
+          - Check [Azure Portal](https://portal.azure.com/#@/resource/subscriptions/***/resourceGroups/rg-portfolio-prod)
+          EOF
+          echo "✅ Summary generated"
 
   validate-deployment:
-    name: Validate Deployment
+    name: ✅ Validate Deployment
     needs: deploy
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Test Website Health
+      - name: 🔍 Test Website Health
         run: |
+          echo "::group::Testing portfolio website"
           URL="${{ needs.deploy.outputs.portfolio_url }}"
           echo "Testing portfolio website at: ${URL}"
 
@@ -178,15 +222,28 @@ jobs:
 
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Website is accessible"
+            echo "::endgroup::"
             exit 0
           else
+            echo "❌ Website returned HTTP $HTTP_CODE"
+            echo "::endgroup::"
             echo "::error::Website returned HTTP $HTTP_CODE"
             exit 1
           fi
 
-      - name: Validation Complete
+      - name: 📊 Validation Summary
         run: |
-          echo "## ✅ Validation Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Portfolio is deployed and accessible at:" >> $GITHUB_STEP_SUMMARY
-          echo "**${{ needs.deploy.outputs.portfolio_url }}" >> $GITHUB_STEP_SUMMARY
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## ✅ Validation Complete!
+          
+          ### 🌐 Website Status
+          Portfolio is deployed and accessible:
+          
+          **[${{ needs.deploy.outputs.portfolio_url }}](${{ needs.deploy.outputs.portfolio_url }})**
+          
+          ### ✅ Health Checks
+          - ✅ HTTP 200 OK
+          - ✅ Website accessible
+          - ✅ Static hosting enabled
+          EOF
+          echo "✅ Validation summary generated"
