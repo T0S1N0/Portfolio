@@ -3,7 +3,7 @@ name: 🚀 Deploy Portfolio to Azure
 on:
   push:
     branches:
-      - main
+      - deploy-azure-vss
   pull_request:
     branches:
       - main
@@ -12,6 +12,9 @@ on:
 permissions:
   contents: read
   id-token: write
+
+env:
+  AZURE_SUBSCRIPTION_ID: "dcf6e446-918c-4487-948f-0ab41a019a25"
 
 jobs:
   terraform-plan:
@@ -38,7 +41,7 @@ jobs:
       - name: 🔧 Terraform Init
         working-directory: ./terraform
         env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -59,7 +62,7 @@ jobs:
       - name: 📋 Terraform Plan
         working-directory: ./terraform
         env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -81,7 +84,7 @@ jobs:
     name: 🏗️ Deploy to Azure
     needs: terraform-plan
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/deploy-azure-vss' && github.event_name == 'push'
     outputs:
       storage_account_name: ${{ steps.tf_outputs.outputs.storage_account_name }}
       portfolio_url: ${{ steps.tf_outputs.outputs.portfolio_url }}
@@ -104,7 +107,7 @@ jobs:
       - name: 🔧 Terraform Init
         working-directory: ./terraform
         env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -117,7 +120,7 @@ jobs:
       - name: 🚀 Terraform Apply
         working-directory: ./terraform
         env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -150,7 +153,7 @@ jobs:
         working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: 1
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -208,7 +211,7 @@ jobs:
     name: ✅ Validate Deployment
     needs: deploy
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/deploy-azure-vss' && github.event_name == 'push'
 
     steps:
       - name: 🔍 Test Website Health
