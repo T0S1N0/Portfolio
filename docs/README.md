@@ -6,7 +6,8 @@ This repository showcases three main projects demonstrating cloud infrastructure
 
 1. **[Azure Serverless E-Commerce Platform](https://github.com/T0S1N0/Azure-Serverless-E-Commerce-Platform)** - Full-stack serverless e-commerce with React, Azure Functions, and Cosmos DB
 2. **[Self-Hosted GitHub Actions Runners](https://github.com/T0S1N0/self-hosted-azure-github-runners)** - Automated deployment of GitHub runners on Azure VMs with Terraform and Ansible
-3. **[Portfolio Website](https://github.com/T0S1N0/Portfolio)** - This portfolio itself, deployed as Azure static website
+3. **[APIM → Functions → Service Bus (Terraform + GitHub Actions)](https://github.com/T0S1N0/azure-gha-terraform-functions-apim)** - End-to-end Azure serverless integration with APIM, Functions, Service Bus, remote state, and CI/CD
+4. **[Portfolio Website](https://github.com/T0S1N0/Portfolio)** - This portfolio itself, deployed as Azure static website
 
 ## 🏗️ Architecture
 
