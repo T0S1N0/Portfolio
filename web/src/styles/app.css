@@ -138,7 +138,16 @@ button:focus-visible {
 .cv-btn {
   padding: 0.55rem 1rem;
   border-radius: 999px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(13, 99, 198, 0.25);
+}
+
+.cv-btn:hover {
+  background: var(--primary-strong);
+  border-color: var(--primary-strong);
+  color: #fff;
 }
 
 .menu-toggle {
@@ -249,7 +258,9 @@ button:focus-visible {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
   transition: transform 0.2s ease;
 }
 
