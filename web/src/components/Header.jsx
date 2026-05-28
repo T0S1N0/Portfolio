@@ -14,7 +14,7 @@ export default function Header() {
     <header className="site-header">
       <a href="#home" className="brand" aria-label="Go to top of page">
         <img src="/assets/png/profile.jpg" alt="Portrait of Miquel Martin Leiva" className="brand__image" />
-        <span className="brand__text">Miquel Martin</span>
+        <span className="brand__text">Miquel Martin Leiva</span>
       </a>
 
       <button
