@@ -1,0 +1,37 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#081f3a"/>
+      <stop offset="100%" stop-color="#0f63c6"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#f7b32b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" rx="36" fill="url(#bg)"/>
+  <circle cx="980" cy="120" r="180" fill="#ffffff" fill-opacity="0.08"/>
+  <circle cx="1080" cy="520" r="220" fill="#f7b32b" fill-opacity="0.12"/>
+  <path d="M90 520C190 420 300 390 420 430C510 460 600 545 720 530C840 515 900 410 1020 360" stroke="url(#accent)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="120" y="125" width="390" height="310" rx="28" fill="#0b1730" fill-opacity="0.75" stroke="#7dd3fc" stroke-opacity="0.45"/>
+  <text x="165" y="205" fill="#ffffff" font-family="Manrope, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3">SELF-HOSTED RUNNERS</text>
+  <text x="165" y="258" fill="#c7d7ee" font-family="Space Grotesk, Arial, sans-serif" font-size="54" font-weight="700">Azure VM Fleet</text>
+  <text x="165" y="314" fill="#c7d7ee" font-family="Space Grotesk, Arial, sans-serif" font-size="54" font-weight="700">Automation</text>
+  <rect x="165" y="355" width="150" height="14" rx="7" fill="#7dd3fc"/>
+  <g transform="translate(650 135)">
+    <rect x="0" y="0" width="360" height="250" rx="28" fill="#f8fafc" fill-opacity="0.95"/>
+    <rect x="34" y="34" width="292" height="18" rx="9" fill="#dbeafe"/>
+    <rect x="34" y="68" width="186" height="18" rx="9" fill="#bfdbfe"/>
+    <rect x="34" y="110" width="292" height="22" rx="11" fill="#0f63c6" fill-opacity="0.8"/>
+    <rect x="34" y="152" width="232" height="22" rx="11" fill="#0b1730" fill-opacity="0.82"/>
+    <circle cx="292" cy="121" r="44" fill="#f7b32b" fill-opacity="0.95"/>
+    <path d="M274 121h36M292 103v36" stroke="#0b1730" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(770 410)">
+    <rect x="0" y="0" width="240" height="130" rx="22" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="52" cy="65" r="24" fill="#0f63c6"/>
+    <circle cx="120" cy="65" r="24" fill="#7dd3fc"/>
+    <circle cx="188" cy="65" r="24" fill="#f7b32b"/>
+    <path d="M76 65h20M144 65h20" stroke="#0b1730" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
