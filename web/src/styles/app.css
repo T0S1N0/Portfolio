@@ -216,9 +216,15 @@ button:focus-visible {
 }
 
 .btn {
-  padding: 0.75rem 1.1rem;
+  display: inline-block;
+  padding: 0.65rem 1.2rem;
   border-radius: var(--radius-sm);
-  font-weight: 800;
+  border: 1px solid transparent;
+  margin-left: 0.25rem;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(13, 99, 198, 0.25);
   letter-spacing: 0.02em;
   border: 2px solid transparent;
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
@@ -470,7 +476,14 @@ button:focus-visible {
   .site-nav a {
     display: block;
     padding: 0.45rem 0;
-  }
+    }
+
+    .site-nav .cv-btn {
+      display: inline-block;
+      padding: 0.65rem 1.2rem;
+      margin-top: 0.35rem;
+      margin-left: 0;
+    }
 
   .site-nav--open {
     opacity: 1;
