@@ -17,14 +17,6 @@ export default function Hero() {
           </a>
         </div>
       </div>
-      <aside className="hero__socials" aria-label="Social links">
-        <a href="https://github.com/T0S1N0" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
-          <img src="/assets/png/github-ico.png" alt="" aria-hidden="true" />
-        </a>
-        <a href="https://www.linkedin.com/in/miquel-martin-leiva/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
-          <img src="/assets/png/linkedin-ico.png" alt="" aria-hidden="true" />
-        </a>
-      </aside>
     </section>
   )
 }
