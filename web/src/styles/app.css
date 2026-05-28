@@ -24,6 +24,10 @@ body,
   min-height: 100%;
 }
 
+html {
+  scroll-padding-top: 6rem;
+}
+
 body {
   font-family: 'Manrope', sans-serif;
   color: var(--text);
@@ -72,6 +76,13 @@ button:focus-visible {
 .site-footer {
   width: var(--container);
   margin-inline: auto;
+}
+
+.hero,
+.about,
+.projects,
+.site-footer {
+  scroll-margin-top: 6rem;
 }
 
 .site-header {
