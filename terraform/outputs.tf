@@ -25,6 +25,17 @@ output "deployment_summary" {
     storage_account = azurerm_storage_account.portfolio.name
     portfolio_url   = azurerm_storage_account.portfolio.primary_web_endpoint
     resource_group  = azurerm_resource_group.main.name
+    swa_enabled     = var.enable_static_web_app
   }
   description = "Summary of deployed resources"
+}
+
+output "swa_default_hostname" {
+  value       = var.enable_static_web_app ? azurerm_static_web_app.portfolio[0].default_host_name : null
+  description = "Static Web App default hostname when SWA migration is enabled"
+}
+
+output "swa_url" {
+  value       = var.enable_static_web_app ? "https://${azurerm_static_web_app.portfolio[0].default_host_name}" : null
+  description = "Static Web App URL when SWA migration is enabled"
 }
